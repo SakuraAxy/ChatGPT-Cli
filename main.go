@@ -4,10 +4,13 @@ import (
 	"bufio"
 	"context"
 	"errors"
+	"flag"
 	"fmt"
 	openai "github.com/sashabaranov/go-openai"
 	"io"
+	"net/http"
 	"os"
+	"time"
 )
 
 func GetResponse(c *openai.Client, ctx context.Context, quesiton string) {
@@ -46,20 +49,67 @@ func GetResponse(c *openai.Client, ctx context.Context, quesiton string) {
 	}
 }
 
+func checkChatGPTConnect(timeOut time.Duration) error {
+	client := &http.Client{
+		Timeout: time.Second * timeOut,
+	}
+
+	req, err := http.NewRequest("GET", "https://api.openai.com/", nil)
+	if err != nil {
+		fmt.Println("Check ChatGPT API Failed, Error request:", err)
+		return err
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Check ChatGPT API Failed, Error request:", err)
+		return err
+	}
+
+	// 关闭响应体
+	defer resp.Body.Close()
+	return nil
+}
+
 func main() {
-	apiKey := os.Getenv("OPENAI_API_KEY")
-	if apiKey == "" {
-		panic("OPENAI_API_KEY ENV IS NOT FOUND.")
+
+	proxy := flag.String("proxy", "", "http_proxy address")
+	apiKey := flag.String("apiKey", "", "Open AI Api Key")
+	flag.Parse()
+
+	_ = os.Setenv("http_proxy", *proxy)
+	_ = os.Setenv("https_proxy", *proxy)
+
+	if *apiKey == "" {
+		apiKey := os.Getenv("OPENAI_API_KEY")
+		if apiKey == "" {
+			fmt.Println("OPENAI_API_KEY and apikey option are not set.")
+			flag.Usage()
+			os.Exit(1)
+		}
+
+	}
+	err := checkChatGPTConnect(2)
+	if err != nil {
+		fmt.Println("ChatGPT Connect Failed. Please Check your options: ")
+
+		flag.Usage()
+		os.Exit(1)
 	}
 	ctx := context.Background()
-	client := openai.NewClient(apiKey)
+
+	client := openai.NewClient(*apiKey)
+
 	quit := false
+
+	fmt.Println("Hi , Im ChatGPT, You can ask me a question, and I will do my best to answer your question")
+
 	for !quit {
-		fmt.Print("\ninput your questions(type `q/Q/quit` to exit): ")
+		fmt.Print("\nTyping your questions(use `q | quit` to exit console) : ")
 		reader := bufio.NewReader(os.Stdin)
 		questions, _ := reader.ReadString('\n')
 		switch questions {
-		case "quit\n", "q\n", "Q\n":
+		case "quit\n", "q\n":
 			quit = true
 		case "":
 			continue
@@ -68,6 +118,6 @@ func main() {
 		}
 
 	}
-	fmt.Println("Exit ChatGPT.")
+	fmt.Println("ChatGPT bye.")
 
 }
