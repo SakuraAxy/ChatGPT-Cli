@@ -1,4 +1,4 @@
-module chtgpt
+module github.com/SakurAxy/ChatGPT-Cli
 
 go 1.18
 
