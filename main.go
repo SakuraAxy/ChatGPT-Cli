@@ -62,9 +62,8 @@ func main() {
 			}
 
 		}
+		fmt.Println("ChatGPT bye.")
 
 	}
-
-	fmt.Println("ChatGPT bye.")
 
 }
