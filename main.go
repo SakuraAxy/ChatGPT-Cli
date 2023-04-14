@@ -40,12 +40,12 @@ func main() {
 
 	client := openai.NewClient(*apiKey)
 
-	fmt.Println("Hi , Im ChatGPT, You can ask me a question, and I will do my best to answer your question")
-
 	if *questions != "" {
 		chat.GetStaticResponse(client, ctx, *questions)
 
 	} else {
+		fmt.Println("Hi , Im ChatGPT, You can ask me a question, and I will do my best to answer your question")
+
 		quit := false
 
 		for !quit {

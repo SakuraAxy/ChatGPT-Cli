@@ -92,7 +92,7 @@ func CheckChatGPTConnect(timeOut time.Duration) error {
 	return nil
 }
 
-func SetHTTPProxies(httpProxy, httpsProxy string) error {
+func SetHTTPProxies(httpProxy string, httpsProxy string) error {
 	if err := os.Setenv("http_proxy", httpProxy); err != nil {
 		return fmt.Errorf("failed to set http_proxy: %v", err)
 	}
