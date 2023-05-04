@@ -15,4 +15,4 @@ Request your OpenAPI key in https://beta.openai.com/account/api-keys
 Usage
 ----------------------
     export OPENAI_API_KEY=YOUR_OPENAI_API_KEY
-    ./ChatGPT-Cli --proxy http://proxy_address:port --apiKey XXX
+    ./ChatGPT-Cli --proxy http://proxy_address:port --apiKey XXX [-q 'Hi, how are you?']
